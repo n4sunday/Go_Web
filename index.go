@@ -1,20 +1,20 @@
 package main
 import (
     "net/http"
-    "github.com/gorilla/mux"
-    "html/template"
+    "fmt"
 )
-type Product struct{
-    Name string
-    Price int
-}
 func main() {
-    var templates = template.Must(template.ParseFiles("index.html"))
-    router:=mux.NewRouter()
-    router.HandleFunc("/",func(res http.ResponseWriter, req *http.Request){
-        myProduct := Product{"นมสด",250}
-        templates.ExecuteTemplate(res,"index.html",myProduct)
-    })
+    http.HandleFunc("/",index)
+    http.HandleFunc("/login",login)
+    http.ListenAndServe(":8080",nil)
+}
+func index(res http.ResponseWriter, req *http.Request){
+    http.ServeFile(res,req,"index.html")
+}
+func login(res http.ResponseWriter, req *http.Request){
+    fmt.Println("Method:",req.Method)
+    req.ParseForm()
+    fmt.Println("UserName:",req.Form["username"])
+    fmt.Println("Password:",req.Form["password"])
 
-    http.ListenAndServe(":8080",router)
 }
